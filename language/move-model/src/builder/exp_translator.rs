@@ -636,6 +636,9 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
                         "signer" => {
                             return check_zero_args(self, Type::new_prim(PrimitiveType::Signer));
                         }
+                        "table_handle" => {
+                            return check_zero_args(self, Type::new_prim(PrimitiveType::TableHandle));
+                        }
                         "vector" => {
                             if args.len() != 1 {
                                 self.error(
@@ -1923,6 +1926,7 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
             (_, MoveValue::Bool(b)) => Value::Bool(*b),
             (_, MoveValue::Address(a)) => Value::Address(crate::addr_to_big_uint(a)),
             (_, MoveValue::Signer(a)) => Value::Address(crate::addr_to_big_uint(a)),
+            (_, MoveValue::TableHandle(a)) => Value::Address(crate::addr_to_big_uint(a)),
             (Type::Vector(inner), MoveValue::Vector(vs)) => match **inner {
                 Type::Primitive(PrimitiveType::U8) => {
                     let b = vs
