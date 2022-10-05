@@ -101,6 +101,14 @@ impl AccountAddress {
             .map_err(|_| AccountAddressParseError)
             .map(|addr| Self(addr, false))
     }
+
+    pub fn is_for_table(&self) -> bool {
+        self.1
+    }
+
+    pub fn set_for_table(&mut self) {
+        self.1 = true;
+    }
 }
 
 impl AsRef<[u8]> for AccountAddress {
