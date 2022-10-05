@@ -179,6 +179,7 @@ pub enum Type {
     Address,
     /// `signer`
     Signer,
+    TableHandle,
     /// `u8`
     U8,
     /// `u64`
@@ -1447,6 +1448,7 @@ impl fmt::Display for Type {
             Type::Bool => write!(f, "bool"),
             Type::Address => write!(f, "address"),
             Type::Signer => write!(f, "signer"),
+            Type::TableHandle => write!(f, "table_handle"),
             Type::Vector(ty) => write!(f, "vector<{}>", ty),
             Type::Struct(ident, tys) => write!(f, "{}{}", ident, format_type_actuals(tys)),
             Type::Reference(is_mutable, t) => {

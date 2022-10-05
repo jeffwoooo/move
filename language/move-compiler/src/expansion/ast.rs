@@ -592,6 +592,7 @@ impl AbilitySet {
     pub const REFERENCES: [Ability_; 2] = [Ability_::Copy, Ability_::Drop];
     /// Abilities for signer
     pub const SIGNER: [Ability_; 1] = [Ability_::Drop];
+    pub const TABLE_HANDLE: [Ability_; 1] = [Ability_::Drop];
     /// Abilities for vector<_>, note they are predicated on the type argument
     pub const COLLECTION: [Ability_; 3] = [Ability_::Copy, Ability_::Drop, Ability_::Store];
 
@@ -664,6 +665,10 @@ impl AbilitySet {
 
     pub fn signer(loc: Loc) -> Self {
         Self::from_abilities_(loc, Self::SIGNER.to_vec()).unwrap()
+    }
+
+    pub fn table_handle(loc: Loc) -> Self {
+        Self::from_abilities_(loc, Self::TABLE_HANDLE.to_vec()).unwrap()
     }
 
     pub fn collection(loc: Loc) -> Self {

@@ -652,6 +652,7 @@ fn compile_type(
     Ok(match ty {
         Type::Address => SignatureToken::Address,
         Type::Signer => SignatureToken::Signer,
+        Type::TableHandle => SignatureToken::TableHandle,
         Type::U8 => SignatureToken::U8,
         Type::U64 => SignatureToken::U64,
         Type::U128 => SignatureToken::U128,
@@ -1523,6 +1524,7 @@ fn compile_constant(_context: &mut Context, ty: Type, value: MoveValue) -> Resul
         Ok(match ty {
             Type::Address => MoveTypeLayout::Address,
             Type::Signer => MoveTypeLayout::Signer,
+            Type::TableHandle => MoveTypeLayout::TableHandle,
             Type::U8 => MoveTypeLayout::U8,
             Type::U64 => MoveTypeLayout::U64,
             Type::U128 => MoveTypeLayout::U128,

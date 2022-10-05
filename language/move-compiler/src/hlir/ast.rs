@@ -433,6 +433,7 @@ impl BaseType_ {
         let kind = match b_ {
             U8 | U64 | U128 | Bool | Address => AbilitySet::primitives(loc),
             Signer => AbilitySet::signer(loc),
+            TableHandle => AbilitySet::table_handle(loc),
             Vector => {
                 let declared_abilities = AbilitySet::collection(loc);
                 let ty_arg_abilities = {

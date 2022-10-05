@@ -807,6 +807,7 @@ fn base_type(context: &mut Context, sp!(_, bt_): H::BaseType) -> IR::Type {
         }
         B::Apply(_, sp!(_, TN::Builtin(sp!(_, BT::Address))), _) => IRT::Address,
         B::Apply(_, sp!(_, TN::Builtin(sp!(_, BT::Signer))), _) => IRT::Signer,
+        B::Apply(_, sp!(_, TN::Builtin(sp!(_, BT::TableHandle))), _) => IRT::TableHandle,
         B::Apply(_, sp!(_, TN::Builtin(sp!(_, BT::U8))), _) => IRT::U8,
         B::Apply(_, sp!(_, TN::Builtin(sp!(_, BT::U64))), _) => IRT::U64,
         B::Apply(_, sp!(_, TN::Builtin(sp!(_, BT::U128))), _) => IRT::U128,

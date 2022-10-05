@@ -555,6 +555,7 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
                     Builtin(builtin_type_name) => match &builtin_type_name.value {
                         Address => Type::new_prim(PrimitiveType::Address),
                         Signer => Type::new_prim(PrimitiveType::Signer),
+                        TableHandle => Type::new_prim(PrimitiveType::TableHandle),
                         U8 => Type::new_prim(PrimitiveType::U8),
                         U64 => Type::new_prim(PrimitiveType::U64),
                         U128 => Type::new_prim(PrimitiveType::U128),

@@ -138,6 +138,7 @@ pub enum BuiltinTypeName_ {
     Address,
     // signer
     Signer,
+    TableHandle,
     // u8
     U8,
     // u64
@@ -292,6 +293,7 @@ static BUILTIN_TYPE_ALL_NAMES: Lazy<BTreeSet<Symbol>> = Lazy::new(|| {
     [
         BuiltinTypeName_::ADDRESS,
         BuiltinTypeName_::SIGNER,
+        BuiltinTypeName_::TABLE_HANDLE,
         BuiltinTypeName_::U_8,
         BuiltinTypeName_::U_64,
         BuiltinTypeName_::U_128,
@@ -323,6 +325,7 @@ static BUILTIN_TYPE_ORDERED: Lazy<BTreeSet<BuiltinTypeName_>> =
 impl BuiltinTypeName_ {
     pub const ADDRESS: &'static str = "address";
     pub const SIGNER: &'static str = "signer";
+    pub const TABLE_HANDLE: &'static str = "table_handle";
     pub const U_8: &'static str = "u8";
     pub const U_64: &'static str = "u64";
     pub const U_128: &'static str = "u128";
@@ -369,6 +372,7 @@ impl BuiltinTypeName_ {
         match self {
             B::Address | B::U8 | B::U64 | B::U128 | B::Bool => AbilitySet::primitives(loc),
             B::Signer => AbilitySet::signer(loc),
+            B::TableHandle => AbilitySet::table_handle(loc),
             B::Vector => AbilitySet::collection(loc),
         }
     }
@@ -377,7 +381,7 @@ impl BuiltinTypeName_ {
         use BuiltinTypeName_ as B;
         // Match here to make sure this function is fixed when collections are added
         match self {
-            B::Address | B::Signer | B::U8 | B::U64 | B::U128 | B::Bool => vec![],
+            B::Address | B::Signer | B::TableHandle | B::U8 | B::U64 | B::U128 | B::Bool => vec![],
             B::Vector => vec![AbilitySet::empty()],
         }
     }
@@ -456,6 +460,7 @@ impl Type_ {
         let abilities = match &b.value {
             B::Address | B::U8 | B::U64 | B::U128 | B::Bool => Some(AbilitySet::primitives(b.loc)),
             B::Signer => Some(AbilitySet::signer(b.loc)),
+            B::TableHandle => Some(AbilitySet::table_handle(b.loc)),
             B::Vector => None,
         };
         let n = sp(b.loc, TypeName_::Builtin(b));
@@ -542,6 +547,7 @@ impl fmt::Display for BuiltinTypeName_ {
             match self {
                 BT::Address => BT::ADDRESS,
                 BT::Signer => BT::SIGNER,
+                BT::TableHandle => BT::TABLE_HANDLE,
                 BT::U8 => BT::U_8,
                 BT::U64 => BT::U_64,
                 BT::U128 => BT::U_128,
