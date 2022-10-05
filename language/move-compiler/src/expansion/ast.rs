@@ -592,7 +592,7 @@ impl AbilitySet {
     pub const REFERENCES: [Ability_; 2] = [Ability_::Copy, Ability_::Drop];
     /// Abilities for signer
     pub const SIGNER: [Ability_; 1] = [Ability_::Drop];
-    pub const TABLE_HANDLE: [Ability_; 1] = [Ability_::Drop];
+    pub const TABLE_HANDLE: [Ability_; 2] = [Ability_::Drop, Ability_::Store];
     /// Abilities for vector<_>, note they are predicated on the type argument
     pub const COLLECTION: [Ability_; 3] = [Ability_::Copy, Ability_::Drop, Ability_::Store];
 

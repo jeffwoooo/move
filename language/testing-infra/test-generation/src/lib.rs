@@ -416,7 +416,7 @@ pub fn abilities(
 
         Reference(_) | MutableReference(_) => AbilitySet::REFERENCES,
         Signer => AbilitySet::SIGNER,
-        TableHandle =>AbilitySet::TABLE_HANDLE,
+        TableHandle => AbilitySet::TABLE_HANDLE,
         TypeParameter(idx) => constraints[*idx as usize],
         Vector(ty) => AbilitySet::polymorphic_abilities(
             AbilitySet::VECTOR,
