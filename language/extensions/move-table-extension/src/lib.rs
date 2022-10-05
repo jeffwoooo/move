@@ -368,7 +368,7 @@ fn native_new_table_handle(
     assert!(table_data
         .new_tables
         .insert(
-            TableHandleWrap(handle),
+            TableHandle(handle),
             TableInfo::new(key_type, value_type)
         )
         .is_none());
