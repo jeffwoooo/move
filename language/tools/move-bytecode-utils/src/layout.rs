@@ -25,6 +25,8 @@ const ADDRESS: &str = "AccountAddress";
 /// Name of the Move `signer` type in the serde registry
 const SIGNER: &str = "Signer";
 
+const TABLE_HANDLE: &str = "TableHandle";
+
 /// Type for building a registry of serde-reflection friendly struct layouts for Move types.
 /// The layouts created by this type are intended to be passed to the serde-generate tool to create
 /// struct bindings for Move types in source languages that use Move-based services.
@@ -119,6 +121,7 @@ impl<T: GetModule> SerdeLayoutBuilder<T> {
             U128 => Format::U128,
             Address => Format::TypeName(ADDRESS.to_string()),
             Signer => Format::TypeName(SIGNER.to_string()),
+            TableHandle => Format::TypeName(TABLE_HANDLE.to_string()),
             Struct {
                 address,
                 module,
@@ -260,6 +263,7 @@ impl TypeLayoutBuilder {
             U128 => MoveTypeLayout::U128,
             Address => MoveTypeLayout::Address,
             Signer => bail!("Type layouts cannot contain signer"),
+            TableHandle => bail!("Type layouts cannot contain table handle"), //TODO: check
             Vector(elem_t) => {
                 MoveTypeLayout::Vector(Box::new(Self::build(elem_t, resolver, layout_type)?))
             }
@@ -320,6 +324,7 @@ impl TypeLayoutBuilder {
             U128 => MoveTypeLayout::U128,
             Address => MoveTypeLayout::Address,
             Signer => bail!("Type layouts cannot contain signer"),
+            TableHandle => bail!("Type layouts cannot contain table handle"), // todo: check
             Reference(_) | MutableReference(_) => bail!("Type layouts cannot contain references"),
         })
     }

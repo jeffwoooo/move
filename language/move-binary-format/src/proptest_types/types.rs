@@ -65,6 +65,7 @@ impl StDefnMaterializeState {
 
             Reference(_) | MutableReference(_) => AbilitySet::REFERENCES,
             Signer => AbilitySet::SIGNER,
+            TableHandle => AbilitySet::TABLE_HANDLE,
             TypeParameter(_) => AbilitySet::ALL,
             Vector(ty) => {
                 let inner = self.potential_abilities(ty);

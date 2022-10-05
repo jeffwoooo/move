@@ -1769,6 +1769,7 @@ fn format_move_value(v: &MoveValue) -> String {
         MoveValue::Bool(true) => "true".to_owned(),
         MoveValue::Bool(false) => "false".to_owned(),
         MoveValue::Address(a) => format!("0x{}", a.short_str_lossless()),
+        MoveValue::TableHandle(a) => format!("0x{}-table", a.short_str_lossless()), //TODO: check
         MoveValue::Vector(v) => {
             let items = v
                 .iter()

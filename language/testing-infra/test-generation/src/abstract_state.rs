@@ -59,6 +59,7 @@ impl AbstractValue {
                 | SignatureToken::Reference(_)
                 | SignatureToken::MutableReference(_)
                 | SignatureToken::Signer
+                | SignatureToken::TableHandle
                 | SignatureToken::Vector(_)
                 | SignatureToken::TypeParameter(_) => false,
                 SignatureToken::Bool

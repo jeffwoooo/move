@@ -167,6 +167,7 @@ pub fn convert_move_type_tag(env: &GlobalEnv, tag: &TypeTag) -> PartialVMResult<
         TypeTag::U128 => BaseType::mk_u128(),
         TypeTag::Address => BaseType::mk_address(),
         TypeTag::Signer => BaseType::mk_signer(),
+        TypeTag::TableHandle => BaseType::mk_table_handle(),
         TypeTag::Vector(elem_tag) => BaseType::mk_vector(convert_move_type_tag(env, elem_tag)?),
         TypeTag::Struct(struct_tag) => {
             BaseType::mk_struct(convert_move_struct_tag(env, struct_tag)?)
@@ -294,6 +295,7 @@ fn get_abilities(env: &GlobalEnv, ty: &TypeTag) -> PartialVMResult<AbilitySet> {
         TypeTag::Bool | TypeTag::U8 | TypeTag::U64 | TypeTag::U128 | TypeTag::Address => {
             Ok(AbilitySet::PRIMITIVES)
         }
+        TypeTag::TableHandle => Ok(AbilitySet::TABLE_HANDLE),
         TypeTag::Signer => Ok(AbilitySet::SIGNER),
         TypeTag::Vector(elem_ty) => AbilitySet::polymorphic_abilities(
             AbilitySet::VECTOR,

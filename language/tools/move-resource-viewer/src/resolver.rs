@@ -97,6 +97,7 @@ impl<'a, T: MoveResolver + ?Sized> Resolver<'a, T> {
         Ok(match type_tag {
             TypeTag::Address => FatType::Address,
             TypeTag::Signer => FatType::Signer,
+            TypeTag::TableHandle => FatType::TableHandle,
             TypeTag::Bool => FatType::Bool,
             TypeTag::Struct(st) => FatType::Struct(Box::new(self.resolve_struct(st)?)),
             TypeTag::U8 => FatType::U8,
@@ -146,6 +147,8 @@ impl<'a, T: MoveResolver + ?Sized> Resolver<'a, T> {
             SignatureToken::U128 => FatType::U128,
             SignatureToken::Address => FatType::Address,
             SignatureToken::Signer => FatType::Signer,
+            SignatureToken::TableHandle => FatType::TableHandle,
+
             SignatureToken::Vector(ty) => {
                 FatType::Vector(Box::new(self.resolve_signature(module, ty)?))
             }

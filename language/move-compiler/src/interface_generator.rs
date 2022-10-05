@@ -347,6 +347,7 @@ fn write_signature_token(ctx: &mut Context, t: &SignatureToken) -> String {
         SignatureToken::U128 => "u128".to_string(),
         SignatureToken::Address => "address".to_string(),
         SignatureToken::Signer => "signer".to_string(),
+        SignatureToken::TableHandle=> "table_handle".to_string(),
         SignatureToken::Vector(inner) => format!("vector<{}>", write_signature_token(ctx, inner)),
         SignatureToken::Struct(idx) => write_struct_handle_type(ctx, *idx),
         SignatureToken::StructInstantiation(idx, types) => {

@@ -978,6 +978,7 @@ fn load_signature_token(cursor: &mut VersionedCursor) -> BinaryLoaderResult<Sign
                 S::U128 => T::Saturated(SignatureToken::U128),
                 S::ADDRESS => T::Saturated(SignatureToken::Address),
                 S::SIGNER => T::Saturated(SignatureToken::Signer),
+                S::TABLE_HANDLE => T::Saturated(SignatureToken::TableHandle),
                 S::VECTOR => T::Vector,
                 S::REFERENCE => T::Reference,
                 S::MUTABLE_REFERENCE => T::MutableReference,

@@ -43,9 +43,9 @@ use std::{
 /// hash over a transaction hash provided by the environment and a table creation counter
 /// local to the transaction.
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
-pub struct TableHandle(pub AccountAddress);
+pub struct TableHandleWrap(pub AccountAddress);
 
-impl Display for TableHandle {
+impl Display for TableHandleWrap {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "T-{:X}", self.0)
     }
@@ -75,9 +75,9 @@ impl Display for TableInfo {
 /// A table change set.
 #[derive(Default)]
 pub struct TableChangeSet {
-    pub new_tables: BTreeMap<TableHandle, TableInfo>,
-    pub removed_tables: BTreeSet<TableHandle>,
-    pub changes: BTreeMap<TableHandle, TableChange>,
+    pub new_tables: BTreeMap<TableHandleWrap, TableInfo>,
+    pub removed_tables: BTreeSet<TableHandleWrap>,
+    pub changes: BTreeMap<TableHandleWrap, TableChange>,
 }
 
 /// A change of a single table.
@@ -90,7 +90,7 @@ pub struct TableChange {
 pub trait TableResolver {
     fn resolve_table_entry(
         &self,
-        handle: &TableHandle,
+        handle: &TableHandleWrap,
         key: &[u8],
     ) -> Result<Option<Vec<u8>>, anyhow::Error>;
 }
@@ -132,14 +132,14 @@ const _NOT_EMPTY: u64 = (102 << 8) + _ECATEGORY_INVALID_STATE as u64;
 /// of the overall context so we can mutate while still accessing the overall context.
 #[derive(Default)]
 struct TableData {
-    new_tables: BTreeMap<TableHandle, TableInfo>,
-    removed_tables: BTreeSet<TableHandle>,
-    tables: BTreeMap<TableHandle, Table>,
+    new_tables: BTreeMap<TableHandleWrap, TableInfo>,
+    removed_tables: BTreeSet<TableHandleWrap>,
+    tables: BTreeMap<TableHandleWrap, Table>,
 }
 
 /// A structure representing a single table.
 struct Table {
-    handle: TableHandle,
+    handle: TableHandleWrap,
     key_layout: MoveTypeLayout,
     value_layout: MoveTypeLayout,
     content: BTreeMap<Vec<u8>, GlobalValue>,
@@ -216,7 +216,7 @@ impl TableData {
     fn get_or_create_table(
         &mut self,
         context: &NativeContext,
-        handle: TableHandle,
+        handle: TableHandleWrap,
         key_ty: &Type,
         value_ty: &Type,
     ) -> PartialVMResult<&mut Table> {
@@ -367,12 +367,15 @@ fn native_new_table_handle(
     let value_type = context.type_to_type_tag(&ty_args[1])?;
     assert!(table_data
         .new_tables
-        .insert(TableHandle(handle), TableInfo::new(key_type, value_type))
+        .insert(
+            TableHandleWrap(handle),
+            TableInfo::new(key_type, value_type)
+        )
         .is_none());
 
     Ok(NativeResult::ok(
         gas_params.base,
-        smallvec![Value::address(handle)],
+        smallvec![Value::table_handle(handle)],
     ))
 }
 
@@ -685,13 +688,13 @@ impl GasParameters {
 // =========================================================================================
 // Helpers
 
-fn get_table_handle(table: &StructRef) -> PartialVMResult<TableHandle> {
+fn get_table_handle(table: &StructRef) -> PartialVMResult<TableHandleWrap> {
     let handle = table
         .borrow_field(HANDLE_FIELD_INDEX)?
         .value_as::<Reference>()?
         .read_ref()?
         .value_as::<AccountAddress>()?;
-    Ok(TableHandle(handle))
+    Ok(TableHandleWrap(handle))
 }
 
 fn serialize(layout: &MoveTypeLayout, val: &Value) -> PartialVMResult<Vec<u8>> {

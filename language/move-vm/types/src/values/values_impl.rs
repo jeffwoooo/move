@@ -232,6 +232,10 @@ impl Container {
     fn signer(x: AccountAddress) -> Self {
         Container::Struct(Rc::new(RefCell::new(vec![ValueImpl::Address(x)])))
     }
+
+    fn table_address(x: AccountAddress) -> Self {
+        Container::Struct(Rc::new(RefCell::new(vec![ValueImpl::Address(x)])))
+    }
 }
 
 /***************************************************************************************
@@ -973,6 +977,10 @@ impl Value {
         Self(ValueImpl::Container(Container::signer(x)))
     }
 
+    pub fn table_handle(x: AccountAddress) -> Self {
+        Self(ValueImpl::Container(Container::table_address(x)))
+    }
+
     /// Create a "unowned" reference to a signer value (&signer) for populating the &signer in
     /// execute function
     pub fn signer_reference(x: AccountAddress) -> Self {
@@ -1547,11 +1555,13 @@ fn check_elem_layout(ty: &Type, v: &Container) -> PartialVMResult<()> {
         | (Type::Bool, Container::VecBool(_))
         | (Type::Address, Container::VecAddress(_))
         | (Type::Signer, Container::Struct(_)) => Ok(()),
+        (Type::TableHandle, Container::Struct(_)) => Ok(()),
 
         (Type::Vector(_), Container::Vec(_)) => Ok(()),
 
         (Type::Struct(_), Container::Vec(_))
         | (Type::Signer, Container::Vec(_))
+        | (Type::TableHandle, Container::Vec(_))
         | (Type::StructInstantiation(_, _), Container::Vec(_)) => Ok(()),
 
         (Type::Reference(_), _) | (Type::MutableReference(_), _) | (Type::TyParam(_), _) => Err(
@@ -1565,6 +1575,7 @@ fn check_elem_layout(ty: &Type, v: &Container) -> PartialVMResult<()> {
         | (Type::Bool, _)
         | (Type::Address, _)
         | (Type::Signer, _)
+        | (Type::TableHandle, _)
         | (Type::Vector(_), _)
         | (Type::Struct(_), _)
         | (Type::StructInstantiation(_, _), _) => Err(PartialVMError::new(
@@ -1738,11 +1749,13 @@ impl Vector {
                     .collect::<PartialVMResult<Vec<_>>>()?,
             ),
 
-            Type::Signer | Type::Vector(_) | Type::Struct(_) | Type::StructInstantiation(_, _) => {
-                Value(ValueImpl::Container(Container::Vec(Rc::new(RefCell::new(
-                    elements.into_iter().map(|v| v.0).collect(),
-                )))))
-            }
+            Type::Signer
+            | Type::TableHandle
+            | Type::Vector(_)
+            | Type::Struct(_)
+            | Type::StructInstantiation(_, _) => Value(ValueImpl::Container(Container::Vec(
+                Rc::new(RefCell::new(elements.into_iter().map(|v| v.0).collect())),
+            ))),
 
             Type::Reference(_) | Type::MutableReference(_) | Type::TyParam(_) => {
                 return Err(
@@ -2536,6 +2549,7 @@ impl<'d> serde::de::DeserializeSeed<'d> for SeedWrapper<&MoveTypeLayout> {
             L::U128 => u128::deserialize(deserializer).map(Value::u128),
             L::Address => AccountAddress::deserialize(deserializer).map(Value::address),
             L::Signer => AccountAddress::deserialize(deserializer).map(Value::signer),
+            L::TableHandle => AccountAddress::deserialize(deserializer).map(Value::table_handle),
 
             L::Struct(struct_layout) => Ok(Value::struct_(
                 SeedWrapper {
@@ -2654,6 +2668,7 @@ impl Value {
             S::U64 => L::U64,
             S::U128 => L::U128,
             S::Address => L::Address,
+            S::TableHandle => L::TableHandle,
             S::Signer => return None,
             S::Vector(inner) => L::Vector(Box::new(Self::constant_sig_token_to_layout(inner)?)),
             // Not yet supported

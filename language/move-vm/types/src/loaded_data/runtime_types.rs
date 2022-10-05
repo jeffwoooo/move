@@ -40,6 +40,7 @@ pub enum Type {
     U128,
     Address,
     Signer,
+    TableHandle,
     Vector(Box<Type>),
     Struct(CachedStructIndex),
     StructInstantiation(CachedStructIndex, Vec<Type>),
@@ -68,6 +69,7 @@ impl Type {
             Type::U128 => Type::U128,
             Type::Address => Type::Address,
             Type::Signer => Type::Signer,
+            Type::TableHandle => Type::TableHandle,
             Type::Vector(ty) => Type::Vector(Box::new(ty.apply_subst(subst, depth + 1)?)),
             Type::Reference(ty) => Type::Reference(Box::new(ty.apply_subst(subst, depth + 1)?)),
             Type::MutableReference(ty) => {
@@ -113,7 +115,9 @@ impl Type {
         use Type::*;
 
         match self {
-            TyParam(_) | Bool | U8 | U64 | U128 | Address | Signer => Self::LEGACY_BASE_MEMORY_SIZE,
+            TyParam(_) | Bool | U8 | U64 | U128 | Address | Signer | TableHandle => {
+                Self::LEGACY_BASE_MEMORY_SIZE
+            }
             Vector(ty) | Reference(ty) | MutableReference(ty) => {
                 Self::LEGACY_BASE_MEMORY_SIZE + ty.size()
             }

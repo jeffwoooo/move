@@ -386,6 +386,7 @@ pub(crate) fn substitute(token: &SignatureToken, tys: &[SignatureToken]) -> Sign
         U128 => U128,
         Address => Address,
         Signer => Signer,
+        TableHandle => TableHandle,
         Vector(ty) => Vector(Box::new(substitute(ty, tys))),
         Struct(idx) => Struct(*idx),
         StructInstantiation(idx, type_params) => StructInstantiation(
@@ -415,6 +416,7 @@ pub fn abilities(
 
         Reference(_) | MutableReference(_) => AbilitySet::REFERENCES,
         Signer => AbilitySet::SIGNER,
+        TableHandle =>AbilitySet::TABLE_HANDLE,
         TypeParameter(idx) => constraints[*idx as usize],
         Vector(ty) => AbilitySet::polymorphic_abilities(
             AbilitySet::VECTOR,

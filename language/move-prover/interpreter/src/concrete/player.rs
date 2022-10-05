@@ -113,7 +113,7 @@ impl<'env> FunctionContext<'env> {
     /// Collect addresses stored in the value recursively
     fn collect_addresses(val: &BaseValue, addresses: &mut Vec<AccountAddress>) {
         match val {
-            BaseValue::Address(v) | BaseValue::Signer(v) => {
+            BaseValue::Address(v) | BaseValue::Signer(v) | BaseValue::TableHandle(v) => {
                 addresses.push(*v);
             }
             BaseValue::Vector(vec) | BaseValue::Struct(vec) => {

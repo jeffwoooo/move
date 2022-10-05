@@ -272,6 +272,7 @@ impl<'env> Abigen<'env> {
                     U128 => TypeTag::U128,
                     Address => TypeTag::Address,
                     Signer => TypeTag::Signer,
+                    TableHandle => TypeTag::TableHandle,
                     Num | Range | EventStore => {
                         bail!("Type {:?} is not allowed in scripts.", ty0)
                     }

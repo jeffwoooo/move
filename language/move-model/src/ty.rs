@@ -54,6 +54,7 @@ pub enum PrimitiveType {
     U128,
     Address,
     Signer,
+    TableHandle,
     // Types only appearing in specifications
     Num,
     Range,
@@ -78,7 +79,7 @@ impl PrimitiveType {
     pub fn is_spec(&self) -> bool {
         use PrimitiveType::*;
         match self {
-            Bool | U8 | U64 | U128 | Address | Signer => false,
+            Bool | U8 | U64 | U128 | Address | Signer | TableHandle => false,
             Num | Range | EventStore => true,
         }
     }
@@ -93,6 +94,7 @@ impl PrimitiveType {
             U128 => MType::U128,
             Address => MType::Address,
             Signer => MType::Signer,
+            TableHandle => MType::TableHandle,
             Num | Range | EventStore => return None,
         })
     }
@@ -432,6 +434,7 @@ impl Type {
             TypeTag::U128 => Primitive(PrimitiveType::U128),
             TypeTag::Address => Primitive(PrimitiveType::Address),
             TypeTag::Signer => Primitive(PrimitiveType::Signer),
+            TypeTag::TableHandle => Primitive(PrimitiveType::TableHandle),
             TypeTag::Struct(s) => {
                 let qid = env.find_struct_by_tag(s).unwrap_or_else(|| {
                     panic!("Invariant violation: couldn't resolve struct {:?}", s)
@@ -1267,6 +1270,7 @@ impl fmt::Display for PrimitiveType {
             U128 => f.write_str("u128"),
             Address => f.write_str("address"),
             Signer => f.write_str("signer"),
+            TableHandle => f.write_str("table_handle"),
             Range => f.write_str("range"),
             Num => f.write_str("num"),
             EventStore => f.write_str("estore"),

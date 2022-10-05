@@ -621,6 +621,8 @@ impl AbilitySet {
     pub const REFERENCES: AbilitySet = Self((Ability::Copy as u8) | (Ability::Drop as u8));
     /// Abilities for `Signer`
     pub const SIGNER: AbilitySet = Self(Ability::Drop as u8);
+    /// Abilities for `Signer`
+    pub const TABLE_HANDLE: AbilitySet = Self((Ability::Drop as u8) | (Ability::Store as u8));
     /// Abilities for `Vector`, note they are predicated on the type argument
     pub const VECTOR: AbilitySet =
         Self((Ability::Copy as u8) | (Ability::Drop as u8) | (Ability::Store as u8));
@@ -829,6 +831,7 @@ pub enum SignatureToken {
     Address,
     /// Signer, a 16 bytes immutable type representing the capability to publish at an address
     Signer,
+    TableHandle,
     /// Vector
     Vector(Box<SignatureToken>),
     /// User defined type
@@ -867,7 +870,8 @@ impl<'a> Iterator for SignatureTokenPreorderTraversalIter<'a> {
                         self.stack.extend(inner_toks.iter().rev())
                     }
 
-                    Signer | Bool | Address | U8 | U64 | U128 | Struct(_) | TypeParameter(_) => (),
+                    TableHandle | Signer | Bool | Address | U8 | U64 | U128 | Struct(_)
+                    | TypeParameter(_) => (),
                 }
                 Some(tok)
             }
@@ -899,7 +903,8 @@ impl<'a> Iterator for SignatureTokenPreorderTraversalIterWithDepth<'a> {
                         .stack
                         .extend(inner_toks.iter().map(|tok| (tok, depth + 1)).rev()),
 
-                    Signer | Bool | Address | U8 | U64 | U128 | Struct(_) | TypeParameter(_) => (),
+                    TableHandle | Signer | Bool | Address | U8 | U64 | U128 | Struct(_)
+                    | TypeParameter(_) => (),
                 }
                 Some((tok, depth))
             }
@@ -951,6 +956,7 @@ impl std::fmt::Debug for SignatureToken {
             SignatureToken::U128 => write!(f, "U128"),
             SignatureToken::Address => write!(f, "Address"),
             SignatureToken::Signer => write!(f, "Signer"),
+            SignatureToken::TableHandle => write!(f, "TableHandle"),
             SignatureToken::Vector(boxed) => write!(f, "Vector({:?})", boxed),
             SignatureToken::Struct(idx) => write!(f, "Struct({:?})", idx),
             SignatureToken::StructInstantiation(idx, types) => {
@@ -980,6 +986,7 @@ impl SignatureToken {
             | U128
             | Address
             | Signer
+            | TableHandle
             | Struct(_)
             | StructInstantiation(_, _)
             | Vector(_) => SignatureTokenKind::Value,
@@ -997,6 +1004,7 @@ impl SignatureToken {
             Bool
             | Address
             | Signer
+            | TableHandle
             | Vector(_)
             | Struct(_)
             | StructInstantiation(_, _)
@@ -1036,6 +1044,7 @@ impl SignatureToken {
             Bool | U8 | U64 | U128 | Address => true,
             Vector(inner) => inner.is_valid_for_constant(),
             Signer
+            | TableHandle
             | Struct(_)
             | StructInstantiation(_, _)
             | Reference(_)

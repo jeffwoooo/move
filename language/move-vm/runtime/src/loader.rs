@@ -336,6 +336,7 @@ impl ModuleCache {
             SignatureToken::U128 => Type::U128,
             SignatureToken::Address => Type::Address,
             SignatureToken::Signer => Type::Signer,
+            SignatureToken::TableHandle => Type::TableHandle,
             SignatureToken::TypeParameter(idx) => Type::TyParam(*idx as usize),
             SignatureToken::Vector(inner_tok) => {
                 let inner_type = self.make_type_internal(module, inner_tok, resolver)?;
@@ -894,6 +895,7 @@ impl Loader {
             TypeTag::U128 => Type::U128,
             TypeTag::Address => Type::Address,
             TypeTag::Signer => Type::Signer,
+            TypeTag::TableHandle => Type::TableHandle,
             TypeTag::Vector(tt) => Type::Vector(Box::new(self.load_type(tt, data_store)?)),
             TypeTag::Struct(struct_tag) => {
                 let module_id = ModuleId::new(struct_tag.address, struct_tag.module.clone());
@@ -1238,6 +1240,7 @@ impl Loader {
             // Technically unreachable but, no point in erroring if we don't have to
             Type::Reference(_) | Type::MutableReference(_) => Ok(AbilitySet::REFERENCES),
             Type::Signer => Ok(AbilitySet::SIGNER),
+            Type::TableHandle => Ok(AbilitySet::TABLE_HANDLE),
 
             Type::TyParam(_) => Err(PartialVMError::new(StatusCode::UNREACHABLE).with_message(
                 "Unexpected TyParam type after translating from TypeTag to Type".to_string(),
@@ -2226,6 +2229,7 @@ impl Loader {
             Type::U128 => TypeTag::U128,
             Type::Address => TypeTag::Address,
             Type::Signer => TypeTag::Signer,
+            Type::TableHandle=> TypeTag::TableHandle,
             Type::Vector(ty) => TypeTag::Vector(Box::new(self.type_to_type_tag(ty)?)),
             Type::Struct(gidx) => TypeTag::Struct(self.struct_gidx_to_type_tag(*gidx, &[])?),
             Type::StructInstantiation(gidx, ty_args) => {
@@ -2289,6 +2293,7 @@ impl Loader {
             Type::U128 => MoveTypeLayout::U128,
             Type::Address => MoveTypeLayout::Address,
             Type::Signer => MoveTypeLayout::Signer,
+            Type::TableHandle => MoveTypeLayout::TableHandle,
             Type::Vector(ty) => {
                 MoveTypeLayout::Vector(Box::new(self.type_to_type_layout_impl(ty, depth + 1)?))
             }

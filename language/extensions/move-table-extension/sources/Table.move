@@ -11,7 +11,7 @@ module extensions::table {
 
     /// Type of tables
     struct Table<phantom K: copy + drop, phantom V> has store {
-        handle: address,
+        handle: table_handle,
         length: u64,
     }
 

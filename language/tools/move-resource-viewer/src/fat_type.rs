@@ -60,6 +60,7 @@ pub(crate) enum FatType {
     U128,
     Address,
     Signer,
+    TableHandle,
     Vector(Box<FatType>),
     Struct(Box<FatStructType>),
     Reference(Box<FatType>),
@@ -127,6 +128,7 @@ impl FatType {
             U128 => U128,
             Address => Address,
             Signer => Signer,
+            TableHandle => TableHandle,
             Vector(ty) => Vector(Box::new(ty.subst(ty_args)?)),
             Reference(ty) => Reference(Box::new(ty.subst(ty_args)?)),
             MutableReference(ty) => MutableReference(Box::new(ty.subst(ty_args)?)),
@@ -147,6 +149,7 @@ impl FatType {
             U128 => TypeTag::U128,
             Address => TypeTag::Address,
             Signer => TypeTag::Signer,
+            TableHandle => TypeTag::TableHandle,
             Vector(ty) => TypeTag::Vector(Box::new(ty.type_tag()?)),
             Struct(struct_ty) => TypeTag::Struct(struct_ty.struct_tag()?),
 

@@ -42,6 +42,8 @@ pub enum Type {
     Address,
     #[serde(rename = "signer")]
     Signer,
+    #[serde(rename = "table_handle")]
+    TableHandle,
     Struct {
         address: AccountAddress,
         module: Identifier,
@@ -165,6 +167,7 @@ impl Type {
             U128 => Type::U128,
             Address => Type::Address,
             Signer => Type::Signer,
+            TableHandle => Type::TableHandle,
             Vector(t) => Type::Vector(Box::new(Type::new(m, t))),
             TypeParameter(i) => Type::TypeParameter(*i),
             Reference(t) => Type::Reference(Box::new(Type::new(m, t))),
@@ -183,6 +186,7 @@ impl Type {
             U128 => true,
             Address => true,
             Signer => true,
+            TableHandle => true,
             Struct { type_arguments, .. } => type_arguments.iter().all(|t| t.is_closed()),
             Vector(t) | Reference(t) | MutableReference(t) => t.is_closed(),
         }
@@ -199,6 +203,7 @@ impl Type {
                 U128 => TypeTag::U128,
                 Address => TypeTag::Address,
                 Signer => TypeTag::Signer,
+                TableHandle => TypeTag::TableHandle,
                 Vector(t) => TypeTag::Vector(Box::new(
                     t.into_type_tag()
                         .expect("Invariant violation: vector type argument contains reference"),
@@ -238,7 +243,7 @@ impl Type {
     pub fn subst(&self, type_args: &[Type]) -> Self {
         use Type::*;
         match self {
-            Bool | U8 | U64 | U128 | Address | Signer => self.clone(),
+            Bool | U8 | U64 | U128 | Address | Signer | TableHandle => self.clone(),
             Reference(ty) => Reference(Box::new(ty.subst(type_args))),
             MutableReference(ty) => MutableReference(Box::new(ty.subst(type_args))),
             Vector(t) => Vector(Box::new(t.subst(type_args))),
@@ -345,6 +350,7 @@ impl From<TypeTag> for Type {
             TypeTag::U128 => U128,
             TypeTag::Address => Address,
             TypeTag::Signer => Signer,
+            TypeTag::TableHandle => TableHandle,
             TypeTag::Vector(ty) => Vector(Box::new(Type::from(*ty))),
             TypeTag::Struct(s) => Struct {
                 address: s.address,
@@ -388,6 +394,7 @@ impl std::fmt::Display for Type {
             Type::U128 => write!(f, "u128"),
             Type::Address => write!(f, "address"),
             Type::Signer => write!(f, "signer"),
+            Type::TableHandle => write!(f, "table_handle"),
             Type::Bool => write!(f, "bool"),
             Type::Reference(r) => write!(f, "&{}", r),
             Type::MutableReference(r) => write!(f, "&mut {}", r),

@@ -36,6 +36,8 @@ pub enum TypeTag {
     Address,
     #[serde(rename = "signer", alias = "Signer")]
     Signer,
+    #[serde(rename = "table_handle", alias = "TableHandle")]
+    TableHandle,
     #[serde(rename = "vector", alias = "Vector")]
     Vector(Box<TypeTag>),
     #[serde(rename = "struct", alias = "Struct")]
@@ -183,6 +185,7 @@ impl Display for TypeTag {
             TypeTag::U128 => write!(f, "u128"),
             TypeTag::Address => write!(f, "address"),
             TypeTag::Signer => write!(f, "signer"),
+            TypeTag::TableHandle=> write!(f, "table_handle"),
             TypeTag::Bool => write!(f, "bool"),
         }
     }

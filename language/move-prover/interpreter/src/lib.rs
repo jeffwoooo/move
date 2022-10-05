@@ -377,6 +377,9 @@ fn convert_typed_value_to_move_value(ty: &BaseType, val: BaseValue) -> MoveValue
         BaseType::Primitive(PrimitiveType::Int(IntType::Num)) => unreachable!(),
         BaseType::Primitive(PrimitiveType::Address) => MoveValue::Address(val.into_address()),
         BaseType::Primitive(PrimitiveType::Signer) => MoveValue::Signer(val.into_signer()),
+        BaseType::Primitive(PrimitiveType::TableHandle) => {
+            MoveValue::TableHandle(val.into_table_handle())
+        }
         BaseType::Vector(elem) => MoveValue::Vector(
             val.into_vector()
                 .into_iter()

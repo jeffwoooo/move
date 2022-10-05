@@ -65,7 +65,7 @@ impl TryFrom<MoveValue> for TransactionArgument {
                     })
                     .collect::<Result<Vec<u8>>>()?,
             ),
-            MoveValue::Signer(_) | MoveValue::Struct(_) => {
+            MoveValue::Signer(_) | MoveValue::TableHandle(_) | MoveValue::Struct(_) => {
                 return Err(anyhow!("invalid transaction argument: {:?}", val))
             }
         })

@@ -121,6 +121,7 @@ pub enum SerializedType {
     VECTOR                  = 0xA,
     STRUCT_INST             = 0xB,
     SIGNER                  = 0xC,
+    TABLE_HANDLE            = 0xD,
 }
 
 #[rustfmt::skip]

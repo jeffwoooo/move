@@ -9,6 +9,7 @@ use move_core_types::value::{MoveTypeLayout, MoveValue};
 fn sig_to_ty(sig: &SignatureToken) -> Option<MoveTypeLayout> {
     match sig {
         SignatureToken::Signer => Some(MoveTypeLayout::Signer),
+        SignatureToken::TableHandle => Some(MoveTypeLayout::TableHandle),
         SignatureToken::Address => Some(MoveTypeLayout::Address),
         SignatureToken::Bool => Some(MoveTypeLayout::Bool),
         SignatureToken::U8 => Some(MoveTypeLayout::U8),
@@ -26,6 +27,7 @@ fn sig_to_ty(sig: &SignatureToken) -> Option<MoveTypeLayout> {
 fn ty_to_sig(ty: &MoveTypeLayout) -> Option<SignatureToken> {
     match ty {
         MoveTypeLayout::Address => Some(SignatureToken::Address),
+        MoveTypeLayout::TableHandle => Some(SignatureToken::TableHandle),
         MoveTypeLayout::Signer => Some(SignatureToken::Signer),
         MoveTypeLayout::U8 => Some(SignatureToken::U8),
         MoveTypeLayout::U64 => Some(SignatureToken::U64),

@@ -391,6 +391,7 @@ impl<'a> Disassembler<'a> {
             SignatureToken::U128 => "u128".to_string(),
             SignatureToken::Address => "address".to_string(),
             SignatureToken::Signer => "signer".to_string(),
+            SignatureToken::TableHandle => "table_handle".to_string(),
             SignatureToken::Struct(struct_handle_idx) => self
                 .source_mapper
                 .bytecode

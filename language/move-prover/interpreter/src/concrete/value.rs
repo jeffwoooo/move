@@ -35,6 +35,7 @@ pub enum BaseValue {
     Int(BigInt),
     Address(AccountAddress),
     Signer(AccountAddress),
+    TableHandle(AccountAddress),
     Vector(Vec<BaseValue>),
     Struct(Vec<BaseValue>),
 }
@@ -113,6 +114,12 @@ impl BaseValue {
     pub fn into_signer(self) -> AccountAddress {
         match self {
             Self::Signer(v) => v,
+            _ => unreachable!(),
+        }
+    }
+    pub fn into_table_handle(self) -> AccountAddress {
+        match self {
+            Self::TableHandle(v) => v,
             _ => unreachable!(),
         }
     }
@@ -883,6 +890,7 @@ impl TypedValue {
             }
             BaseValue::Address(v) => MoveValue::Address(v),
             BaseValue::Signer(v) => MoveValue::Signer(v),
+            BaseValue::TableHandle(v) => MoveValue::TableHandle(v),
             BaseValue::Vector(v) => {
                 let elem_ty = self.ty.into_vector_elem();
                 let move_elems = v

@@ -303,6 +303,7 @@ impl AstDebug for MoveValue {
             }
             V::Struct(_) => panic!("ICE struct constants not supported"),
             V::Signer(_) => panic!("ICE signer constants not supported"),
+            V::TableHandle(_) => panic!("ICE table_handle constants not supported"), //TODO: check
         }
     }
 }

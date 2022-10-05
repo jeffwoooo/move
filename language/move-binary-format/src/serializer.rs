@@ -645,6 +645,7 @@ fn serialize_signature_token_single_node_impl(
         SignatureToken::U128 => binary.push(SerializedType::U128 as u8)?,
         SignatureToken::Address => binary.push(SerializedType::ADDRESS as u8)?,
         SignatureToken::Signer => binary.push(SerializedType::SIGNER as u8)?,
+        SignatureToken::TableHandle => binary.push(SerializedType::TABLE_HANDLE as u8)?,
         SignatureToken::Vector(_) => {
             binary.push(SerializedType::VECTOR as u8)?;
         }

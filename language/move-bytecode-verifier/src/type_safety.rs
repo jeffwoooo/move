@@ -825,6 +825,7 @@ fn instantiate(token: &SignatureToken, subst: &Signature) -> SignatureToken {
         U64 => U64,
         U128 => U128,
         Address => Address,
+        TableHandle => TableHandle,
         Signer => Signer,
         Vector(ty) => Vector(Box::new(instantiate(ty, subst))),
         Struct(idx) => Struct(*idx),

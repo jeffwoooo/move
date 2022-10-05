@@ -50,6 +50,7 @@ pub enum MoveValue {
     Vector(Vec<MoveValue>),
     Struct(MoveStruct),
     Signer(AccountAddress),
+    TableHandle(AccountAddress),
 }
 
 /// A layout associated with a named field
@@ -96,6 +97,8 @@ pub enum MoveTypeLayout {
     Struct(MoveStructLayout),
     #[serde(rename(serialize = "signer", deserialize = "signer"))]
     Signer,
+    #[serde(rename(serialize = "table_handle", deserialize = "table_handle"))]
+    TableHandle,
 }
 
 impl MoveValue {
@@ -281,6 +284,9 @@ impl<'d> serde::de::DeserializeSeed<'d> for &MoveTypeLayout {
             MoveTypeLayout::Signer => {
                 AccountAddress::deserialize(deserializer).map(MoveValue::Signer)
             }
+            MoveTypeLayout::TableHandle => {
+                AccountAddress::deserialize(deserializer).map(MoveValue::TableHandle)
+            }
             MoveTypeLayout::Struct(ty) => Ok(MoveValue::Struct(ty.deserialize(deserializer)?)),
             MoveTypeLayout::Vector(layout) => Ok(MoveValue::Vector(
                 deserializer.deserialize_seq(VectorElementVisitor(layout))?,
@@ -412,6 +418,7 @@ impl serde::Serialize for MoveValue {
             MoveValue::U128(i) => serializer.serialize_u128(*i),
             MoveValue::Address(a) => a.serialize(serializer),
             MoveValue::Signer(a) => a.serialize(serializer),
+            MoveValue::TableHandle(a) => a.serialize(serializer),
             MoveValue::Vector(v) => {
                 let mut t = serializer.serialize_seq(Some(v.len()))?;
                 for val in v {
@@ -480,6 +487,7 @@ impl fmt::Display for MoveTypeLayout {
             Vector(typ) => write!(f, "vector<{}>", typ),
             Struct(s) => write!(f, "{}", s),
             Signer => write!(f, "signer"),
+            TableHandle => write!(f, "table_handle"),
         }
     }
 }
@@ -521,6 +529,7 @@ impl TryInto<TypeTag> for &MoveTypeLayout {
             MoveTypeLayout::U64 => TypeTag::U64,
             MoveTypeLayout::U128 => TypeTag::U128,
             MoveTypeLayout::Signer => TypeTag::Signer,
+            MoveTypeLayout::TableHandle => TypeTag::TableHandle,
             MoveTypeLayout::Vector(v) => {
                 let inner_type = &**v;
                 TypeTag::Vector(Box::new(inner_type.try_into()?))
@@ -554,6 +563,7 @@ impl fmt::Display for MoveValue {
             MoveValue::Bool(true) => write!(f, "true"),
             MoveValue::Address(a) => write!(f, "{}", a.to_hex_literal()),
             MoveValue::Signer(a) => write!(f, "signer({})", a.to_hex_literal()),
+            MoveValue::TableHandle(a) => write!(f, "table_handle({})", a.to_hex_literal()),
             MoveValue::Vector(v) => fmt_list(f, "vector[", v, "]"),
             MoveValue::Struct(s) => fmt::Display::fmt(s, f),
         }

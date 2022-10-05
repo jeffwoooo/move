@@ -500,6 +500,7 @@ fn type_name_to_ident_tokens(env: &GlobalEnv, ty: &Type) -> Vec<TypeIdentToken> 
         Type::Primitive(PrimitiveType::U128) => TypeIdentToken::make("u128"),
         Type::Primitive(PrimitiveType::Address) => TypeIdentToken::make("address"),
         Type::Primitive(PrimitiveType::Signer) => TypeIdentToken::make("signer"),
+        Type::Primitive(PrimitiveType::TableHandle) => TypeIdentToken::make("table_handle"),
         Type::Vector(element) => {
             let mut tokens = TypeIdentToken::make("vector<");
             tokens.extend(type_name_to_ident_tokens(env, element));
@@ -590,6 +591,7 @@ fn type_name_to_info_pack(env: &GlobalEnv, ty: &Type) -> Option<TypeInfoPack> {
         | Type::Primitive(PrimitiveType::U128)
         | Type::Primitive(PrimitiveType::Address)
         | Type::Primitive(PrimitiveType::Signer)
+        | Type::Primitive(PrimitiveType::TableHandle)
         | Type::Vector(_) => None,
         // move types that are not allowed
         Type::Reference(..) | Type::Tuple(..) => {

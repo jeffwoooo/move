@@ -47,6 +47,7 @@ pub enum PrimitiveType {
     Int(IntType),
     Address,
     Signer,
+    TableHandle,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
@@ -119,6 +120,7 @@ impl fmt::Display for PrimitiveType {
             Self::Int(sub) => sub.fmt(f),
             Self::Address => write!(f, "address"),
             Self::Signer => write!(f, "signer"),
+            Self::TableHandle => write!(f, "table_handle"),
         }
     }
 }
@@ -246,6 +248,10 @@ impl BaseType {
 
     pub fn mk_signer() -> Self {
         BaseType::Primitive(PrimitiveType::Signer)
+    }
+
+    pub fn mk_table_handle() -> Self {
+        BaseType::Primitive(PrimitiveType::TableHandle)
     }
 
     pub fn mk_vector(elem: BaseType) -> Self {
@@ -427,6 +433,7 @@ impl BaseType {
             BaseType::Primitive(PrimitiveType::Int(IntType::Num)) => unreachable!(),
             BaseType::Primitive(PrimitiveType::Address) => TypeTag::Address,
             BaseType::Primitive(PrimitiveType::Signer) => TypeTag::Signer,
+            BaseType::Primitive(PrimitiveType::TableHandle) => TypeTag::TableHandle,
             BaseType::Vector(elem) => TypeTag::Vector(Box::new(elem.to_move_type_tag())),
             BaseType::Struct(inst) => TypeTag::Struct(inst.to_move_struct_tag()),
         }
@@ -441,6 +448,7 @@ impl BaseType {
             BaseType::Primitive(PrimitiveType::Int(IntType::Num)) => unreachable!(),
             BaseType::Primitive(PrimitiveType::Address) => MoveTypeLayout::Address,
             BaseType::Primitive(PrimitiveType::Signer) => MoveTypeLayout::Signer,
+            BaseType::Primitive(PrimitiveType::TableHandle) => MoveTypeLayout::TableHandle,
             BaseType::Vector(elem) => MoveTypeLayout::Vector(Box::new(elem.to_move_type_layout())),
             BaseType::Struct(inst) => MoveTypeLayout::Struct(inst.to_move_struct_layout()),
         }
