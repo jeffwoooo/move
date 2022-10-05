@@ -10,11 +10,11 @@ use std::{convert::TryFrom, fmt, str::FromStr};
 /// A struct that represents an account address.
 #[derive(Ord, PartialOrd, Eq, PartialEq, Hash, Clone, Copy)]
 #[cfg_attr(any(test, feature = "fuzzing"), derive(proptest_derive::Arbitrary))]
-pub struct AccountAddress([u8; AccountAddress::LENGTH]);
+pub struct AccountAddress([u8; AccountAddress::LENGTH], bool);
 
 impl AccountAddress {
     pub const fn new(address: [u8; Self::LENGTH]) -> Self {
-        Self(address)
+        Self(address, false)
     }
 
     /// The number of bytes in an address.
@@ -28,7 +28,7 @@ impl AccountAddress {
     };
 
     /// Hex address: 0x0
-    pub const ZERO: Self = Self([0u8; Self::LENGTH]);
+    pub const ZERO: Self = Self([0u8; Self::LENGTH], false);
 
     /// Hex address: 0x1
     pub const ONE: Self = Self::get_hex_address_one();
@@ -36,13 +36,13 @@ impl AccountAddress {
     const fn get_hex_address_one() -> Self {
         let mut addr = [0u8; AccountAddress::LENGTH];
         addr[AccountAddress::LENGTH - 1] = 1u8;
-        Self(addr)
+        Self(addr, false)
     }
 
     pub fn random() -> Self {
         let mut rng = OsRng;
         let buf: [u8; Self::LENGTH] = rng.gen();
-        Self(buf)
+        Self(buf, false)
     }
 
     pub fn short_str_lossless(&self) -> String {
@@ -89,7 +89,7 @@ impl AccountAddress {
     pub fn from_hex<T: AsRef<[u8]>>(hex: T) -> Result<Self, AccountAddressParseError> {
         <[u8; Self::LENGTH]>::from_hex(hex)
             .map_err(|_| AccountAddressParseError)
-            .map(Self)
+            .map(|addr| Self(addr, false))
     }
 
     pub fn to_hex(&self) -> String {
@@ -99,7 +99,7 @@ impl AccountAddress {
     pub fn from_bytes<T: AsRef<[u8]>>(bytes: T) -> Result<Self, AccountAddressParseError> {
         <[u8; Self::LENGTH]>::try_from(bytes.as_ref())
             .map_err(|_| AccountAddressParseError)
-            .map(Self)
+            .map(|addr| Self(addr, false))
     }
 }
 
