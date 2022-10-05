@@ -357,6 +357,7 @@ impl BuiltinTypeName_ {
         match name_str {
             BT::ADDRESS => Some(BT::Address),
             BT::SIGNER => Some(BT::Signer),
+            BT::TABLE_HANDLE => Some(BT::TableHandle),
             BT::U_8 => Some(BT::U8),
             BT::U_64 => Some(BT::U64),
             BT::U_128 => Some(BT::U128),
